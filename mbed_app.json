@@ -1,0 +1,22 @@
+{
+    "config": {
+        "SD_DAT0": "NC",
+        "SD_DAT1": "NC",
+        "SD_DAT2": "NC",
+        "SD_DAT3": "NC",
+        "SD_CMD":  "NC",
+        "SD_CLK":  "NC",
+        "SD_CD":   "NC"
+    },
+    "target_overrides": {
+        "NUMAKER_PFM_NUC472": {
+            "SD_DAT0": "PF_5",
+            "SD_DAT1": "PF_4",
+            "SD_DAT2": "PF_3",
+            "SD_DAT3": "PF_2",
+            "SD_CMD":  "PF_7",
+            "SD_CLK":  "PF_8",
+            "SD_CD":   "PF_6"
+        }
+    }
+}
