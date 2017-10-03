@@ -25,7 +25,9 @@
 S_NET_CONFIG net_config = {IP_STATIC_MODE, IP_ADDRESS, NETWORK_MASK, GATEWAY_ADDRESS};
 
 #if defined (TARGET_NUMAKER_PFM_M487)
-#error Not defined UART ports yet.
+BufferedSerial serial_0(PH_8, PH_9, 256, 4);    // UART1
+BufferedSerial serial_1(PC_12, PC_11, 256, 4);  // UART0
+BufferedSerial serial_2(PA_3, PA_2, 256, 4);  // UART4
 
 #elif defined (TARGET_NUMAKER_PFM_NUC472)
 BufferedSerial serial_0(PH_1, PH_0, 256, 4);    // UART4
