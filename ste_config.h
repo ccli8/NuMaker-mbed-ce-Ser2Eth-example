@@ -10,36 +10,43 @@
 
 #include "mbed.h"
 #include "EthernetInterface.h"
-#include "TCPSocket.h"
-#include "TCPServer.h"
-#include "BufferedSerial.h"
 #include "FATFileSystem.h"
 #include "NuSDBlockDevice.h"
 
 
-//#define ENABLE_WEB_CONFIG             // Define this to active a simple web sever for
-                                        // UART ports and Ethernet port parameters configuration.
+#include "BufferSerial.h"
 
-/* Maximum UART ports supported */
+
+/* A simple web server for network and UART configuration
+   0: Disable the web server.
+   1: Enable the web server
+*/
+#define ENABLE_WEB_CONFIG   1
+
+/* Maximum UART ports supported.
+   Must define enough tuples of mapping table "port_config[]" in main.c
+*/
 #define MAX_UART_PORTS      2
 
 /* Default UART baud */
 #define DEFAULT_UART_BAUD   115200
 
 /* Network base port number to listen.
-   So the base port maps to the 1st UART port,
-   the (base port + 1) maps to the 2nd UART port, etc. */
+   The base port maps to the 1st UART port,
+   the (base port + 1) maps to the 2nd UART port, etc.
+*/
 #define NET_PORT_BASE   10001
 
-/* Path and Filename of configuration files */
+/* Files in SD card to store settings via web configuration */
 #define SER_CONFIG_FILE "/fs/STE_SER.TXT"   // for serial ports
 #define NET_CONFIG_FILE "/fs/STE_NET.TXT"   // for network
 
-/* Maximum size of server address */
+/* Maximum size of server domain name or address for web configuration */
 #define MAX_SERVER_ADDRESS_SIZE     63
 
-/* Maximum size of IP address */
+/* Maximum size of IP address for web configuration */
 #define MAX_IPV4_ADDRESS_SIZE       15
+
 
 /* Functions and global variables declaration. */
 
@@ -62,8 +69,8 @@ typedef struct {
 
 typedef struct {
     E_NetMode       mode;       // Network server or client mode
-    int             port;       // Network port number
-    BufferedSerial  *pserial;   // UART number
+    int             port;       // Network port number (Server mode)
+    BufferSerial  *pserial;   // UART number
     int             baud;       // UART baud
     int             data;       // UART data bits
     int             stop;       // UART stop bits
@@ -72,7 +79,7 @@ typedef struct {
     unsigned short  server_port;    // Server port for TCP client mode
 } S_PORT_CONFIG;
 
-extern RawSerial output;        // for debug output
+//extern RawSerial output;        // for debug output
 extern EthernetInterface eth;
 extern S_PORT_CONFIG port_config[MAX_UART_PORTS];
 extern S_NET_CONFIG net_config;

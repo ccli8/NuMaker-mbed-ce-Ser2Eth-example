@@ -5,11 +5,11 @@
  * 
  *
  */
- 
+  
 #include <string.h>
 #include "ste_config.h"
 
-#ifdef ENABLE_WEB_CONFIG
+#if ENABLE_WEB_CONFIG
 
 #define PAGE_HEADER \
 "<html><head>\r\n" \
@@ -408,10 +408,10 @@ void process_http_restart_html(TCPSocket *socket, char *pbuf)
     send_web_body(socket, 4);
 
     printf("Restart system...\r\n");
-    wait(1);    // wait 1 second
+    ThisThread::sleep_for(1000);    // wait 1 second
 //  SYS_ResetCPU();
     SYS_ResetChip();
-    wait(100);
+    ThisThread::sleep_for(100000);
 }
 
 void process_http_resetconf_html(TCPSocket *socket, char *pbuf)
@@ -497,16 +497,17 @@ void process_http_request(TCPSocket *socket)
 
 void start_httpd(void)
 {
-    TCPServer http_server;
-    TCPSocket http_socket;
+    TCPSocket http_server;
+    TCPSocket *http_socket;
     SocketAddress http_address;
+    nsapi_error_t err_t;
 
     if (http_server.open(&eth) < 0)
     {
-        printf("http server can't open.\r\n");
+        printf("http server can't be created.\r\n");
         return;
     }
-    if (http_server.bind(eth.get_ip_address(), 80) < 0)
+    if (http_server.bind(80) < 0)
     {
         printf("http server can't bind address and port.\r\n");
         return;
@@ -521,15 +522,17 @@ void start_httpd(void)
 
     while(1)
     {
-        if (http_server.accept(&http_socket, &http_address) < 0)
+        http_socket = http_server.accept(&err_t);
+        if (err_t < 0)
         {
             printf("http server fail to accept connection.\r\n");
             return;
         }
         
+        http_socket->getpeername(&http_address);
         printf("http from %s:%d ...\r\n", http_address.get_ip_address(), http_address.get_port());
-        process_http_request(&http_socket);
-        http_socket.close();
+        process_http_request(http_socket);
+        http_socket->close();
     }
 }
 
