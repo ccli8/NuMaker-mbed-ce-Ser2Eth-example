@@ -46,6 +46,11 @@ BufferedSerial serial_1(PG_2, PG_1);    // UART0
 BufferedSerial serial_2(PC_11, PC_10);  // UART2
 #endif
 
+#elif defined (TARGET_NUMAKER_IOT_M467)
+BufferedSerial serial_0(PB_3, PB_2);    // UART1
+BufferedSerial serial_1(PB_13, PB_12);    // UART0
+BufferedSerial serial_2(PF_7, PF_6);  // UART4
+
 #elif defined (TARGET_NUMAKER_PFM_M453) || defined(TARGET_NUMAKER_PFM_NANO130) || defined(TARGET_NUMAKER_PFM_M2351)
 #error The board has no Ethernet.
 
