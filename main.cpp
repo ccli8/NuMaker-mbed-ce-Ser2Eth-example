@@ -26,24 +26,24 @@ S_NET_CONFIG net_config = {IP_STATIC_MODE, IP_ADDRESS, NETWORK_MASK, GATEWAY_ADD
 
 #if defined (TARGET_NUMAKER_PFM_M487) || defined(TARGET_NUMAKER_IOT_M487)
 #if MBED_MAJOR_VERSION <= 5
-BufferSerial serial_0(PB_3, PB_2, 256, 4);    // UART1
-BufferSerial serial_1(PA_5, PA_4, 256, 4);    // UART5
-//BufferSerial serial_2(PB_13, PB_12, 256, 4);  // UART0, Debug
+BufferedSerial serial_0(PB_3, PB_2, 256, 4);    // UART1
+BufferedSerial serial_1(PA_5, PA_4, 256, 4);    // UART5
+//BufferedSerial serial_2(PB_13, PB_12, 256, 4);  // UART0, Debug
 #else
-BufferSerial serial_0(PB_3, PB_2);    // UART1
-BufferSerial serial_1(PA_5, PA_4);    // UART5
-//BufferSerial serial_2(PB_13, PB_12);  // UART0, Debug
+BufferedSerial serial_0(PB_3, PB_2);    // UART1
+BufferedSerial serial_1(PA_5, PA_4);    // UART5
+//BufferedSerial serial_2(PB_13, PB_12);  // UART0, Debug
 #endif
 
 #elif defined (TARGET_NUMAKER_PFM_NUC472)
 #if MBED_MAJOR_VERSION <= 5
-BufferSerial serial_0(PH_1, PH_0, 256, 4);    // UART4
-BufferSerial serial_1(PG_2, PG_1, 256, 4);    // UART0
-BufferSerial serial_2(PC_11, PC_10, 256, 4);  // UART2
+BufferedSerial serial_0(PH_1, PH_0, 256, 4);    // UART4
+BufferedSerial serial_1(PG_2, PG_1, 256, 4);    // UART0
+BufferedSerial serial_2(PC_11, PC_10, 256, 4);  // UART2
 #else
-BufferSerial serial_0(PH_1, PH_0);    // UART4
-BufferSerial serial_1(PG_2, PG_1);    // UART0
-BufferSerial serial_2(PC_11, PC_10);  // UART2
+BufferedSerial serial_0(PH_1, PH_0);    // UART4
+BufferedSerial serial_1(PG_2, PG_1);    // UART0
+BufferedSerial serial_2(PC_11, PC_10);  // UART2
 #endif
 
 #elif defined (TARGET_NUMAKER_PFM_M453) || defined(TARGET_NUMAKER_PFM_NANO130) || defined(TARGET_NUMAKER_PFM_M2351)
@@ -255,9 +255,7 @@ int main()
     SocketAddress ip_mask;
     SocketAddress ip_gwaddr;
     
-#ifdef MBED_MAJOR_VERSION
-    printf("Mbed OS version %d.%d.%d\n\n", MBED_MAJOR_VERSION, MBED_MINOR_VERSION, MBED_PATCH_VERSION);
-#endif
+    printf("\r\nmbed OS version is %d.\r\n", MBED_VERSION);
     printf("Start Serial-to-Ethernet...\r\n");
 
 #if ENABLE_WEB_CONFIG
@@ -316,8 +314,13 @@ int main()
     printf("Configure UART ports...\r\n");
     for(int i=0; i<MAX_UART_PORTS; i++)
     {
+#if MBED_MAJOR_VERSION <= 5
         port_config[i].pserial->baud(port_config[i].baud);
         port_config[i].pserial->format(port_config[i].data, port_config[i].parity, port_config[i].stop);
+#else
+        port_config[i].pserial->set_baud(port_config[i].baud);
+        port_config[i].pserial->set_format(port_config[i].data, port_config[i].parity, port_config[i].stop);
+#endif        
     }
     
     /* Configure network IP address */
@@ -365,3 +368,5 @@ int main()
     /* end of main task */    
     //eth.disconnect();
 }
+
+            

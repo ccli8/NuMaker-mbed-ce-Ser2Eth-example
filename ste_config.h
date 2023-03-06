@@ -13,9 +13,9 @@
 #include "FATFileSystem.h"
 #include "NuSDBlockDevice.h"
 
-
-#include "BufferSerial.h"
-
+#if MBED_MAJOR_VERSION <= 5
+#include "BufferedSerial.h"
+#endif
 
 /* A simple web server for network and UART configuration
    0: Disable the web server.
@@ -70,7 +70,7 @@ typedef struct {
 typedef struct {
     E_NetMode       mode;       // Network server or client mode
     int             port;       // Network port number (Server mode)
-    BufferSerial  *pserial;   // UART number
+    BufferedSerial  *pserial;   // UART number
     int             baud;       // UART baud
     int             data;       // UART data bits
     int             stop;       // UART stop bits
@@ -88,3 +88,5 @@ extern bool SD_Card_Mounted;
 void start_httpd(void);
 
 #endif
+
+            
