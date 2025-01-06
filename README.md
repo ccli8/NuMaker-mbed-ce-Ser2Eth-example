@@ -1,55 +1,104 @@
-# Serial to Ethernet
+# Example for transferring data between serial port and Ethernet on Nuvoton's Mbed CE enabled boards
 
-This example shows how to transfer data between serial port and ethernet.
+This is an example to demo transferring data between serial port and Ethernet
+on Nuvoton's Mbed CE enabled boards.
 
-## Required hardware
-* A supported target -
- [NuMaker-IoT-M487](https://os.mbed.com/platforms/NUMAKER-IOT-M487/)
- [NuMaker-PFM-M487](https://os.mbed.com/platforms/NUMAKER-PFM-M487/)
- [Numaker-PFM-NUC472](https://os.mbed.com/platforms/Nuvoton-NUC472/)
- 
-* MicroSD card is optional. It uses to store configuration when existed.
+Check out [Mbed CE](https://github.com/mbed-ce)
+for details on Mbed OS community edition.
 
-## Compile Settings
+## Support development tools
 
-* Default socket number is 4, please add following settings to mbed_app.json to increase it.
+Use cmake-based build system.
+Check out [hello world example](https://github.com/mbed-ce/mbed-ce-hello-world) for getting started.
 
-    "target_overrides": {
-        "*": {
-          "lwip.socket-max": 8,
-          "lwip.tcp-socket-max": 8, 
-          "lwip.udp-socket-max": 8          
-        }
+> **⚠️ Warning**
+>
+> Legacy development tools below are not supported anymore.
+> - [Arm's Mbed Studio](https://os.mbed.com/docs/mbed-os/v6.15/build-tools/mbed-studio.html)
+> - [Arm's Mbed CLI 2](https://os.mbed.com/docs/mbed-os/v6.15/build-tools/mbed-cli-2.html)
+> - [Arm's Mbed CLI 1](https://os.mbed.com/docs/mbed-os/v6.15/tools/developing-mbed-cli.html)
 
-## Configuration
+For [VS Code development](https://github.com/mbed-ce/mbed-os/wiki/Project-Setup:-VS-Code)
+or [OpenOCD as upload method](https://github.com/mbed-ce/mbed-os/wiki/Upload-Methods#openocd),
+install below additionally:
 
-* Mbed OS version
+-   [NuEclipse](https://github.com/OpenNuvoton/Nuvoton_Tools#numicro-software-development-tools): Nuvoton's fork of Eclipse
+-   Nuvoton forked OpenOCD: Shipped with NuEclipse installation package above.
+    Checking openocd version `openocd --version`, it should fix to `0.10.022`.
 
-The template set Mbed OS 5 as defalut but it has been updated for Mbed OS 6.
-Because BufferedSerial has built in Mbed OS 6, the BufferedSerial library in the template has to be removed if you switch Mbed OS to version 6 to avoid conflict.
+## Support targets
 
-* Following configurations are set in ste_config.h
+- [NuMaker-PFM-NUC472](https://www.nuvoton.com/products/iot-solution/iot-platform/numaker-pfm-nuc472/)
+- [NuMaker-PFM-M487](https://www.nuvoton.com/products/iot-solution/iot-platform/numaker-pfm-m487/)
+- [NuMaker-IoT-M487](https://www.nuvoton.com/products/iot-solution/iot-platform/numaker-iot-m487/)
+- [NuMaker-IoT-M467](https://www.nuvoton.com/board/numaker-iot-m467/)
 
-ENABLE_WEB_CONFIG
+> **ℹ️ Information**
+>
+> Ethernet is mandatory
+
+> **ℹ️ Information**
+>
+> MicroSD card is optional. It is used to store configuration when enabled.
+
+## Developer guide
+
+### Configuration
+
+Following configurations are set in **ste_config.h**.
+
+-   ENABLE_WEB_CONFIG:
     Define ENABLE_WEB_CONFIG to active a simple web server for UART ports and Ethernet port configuration.
 
-MAX_UART_PORTS
+-   MAX_UART_PORTS:
     Maximum UART ports supported. It should be 1, 2, or 3. Please also define mapping table "port_config[]" in main.c
 
-DEFAULT_UART_BAUD
+-   DEFAULT_UART_BAUD:
     Default UART baud
 
-NET_PORT_BASE
+-   NET_PORT_BASE:
     Network base port number to listen. The base port maps to the 1st UART port, the (base port + 1) maps to the 2nd UART port, etc.
 
-SER_CONFIG_FILE // for serial ports
-NET_CONFIG_FILE // for network
-    Files in SD card to store settings via web configuration
+-   SER_CONFIG_FILE:
+    File in SD card to store settings for serial ports via web configuration
 
-MAX_SERVER_ADDRESS_SIZE
+-   NET_CONFIG_FILE:
+    Files in SD card to store settings for network via web configuration
+
+-   MAX_SERVER_ADDRESS_SIZE:
     Maximum size of server address for web configuration
 
-MAX_IPV4_ADDRESS_SIZE
-Maximum size of IP address for web configuration
+-   MAX_IPV4_ADDRESS_SIZE:
+    Maximum size of IP address for web configuration
 
-            
+In the following, we take **NuMaker-IoT-M467** board as an example for Mbed CE support.
+
+### Build the example
+
+1.  Clone the example and navigate into it
+    ```
+    $ git clone https://github.com/mbed-nuvoton/NuMaker-mbed-ce-Ser2Eth-example
+    $ cd NuMaker-mbed-ce-Ser2Eth-example
+    $ git checkout -f master
+    ```
+
+1.  Deploy necessary libraries
+    ```
+    $ git submodule update --init
+    ```
+    Or for fast install:
+    ```
+    $ git submodule update --init --filter=blob:none
+    ```
+
+1.  Compile with cmake/ninja
+    ```
+    $ mkdir build; cd build
+    $ cmake .. -GNinja -DCMAKE_BUILD_TYPE=Develop -DMBED_TARGET=NUMAKER_IOT_M467
+    $ ninja
+    $ cd ..
+    ```
+
+### Flash the image
+
+Flash by drag-n-drop built image `NuMaker-mbed-ce-Ser2Eth-example.bin` or `NuMaker-mbed-ce-Ser2Eth-example.hex` onto **NuMaker-IoT-M467** board
