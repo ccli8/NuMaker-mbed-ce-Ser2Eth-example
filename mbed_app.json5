@@ -1,0 +1,13 @@
+{
+    "target_overrides": {
+        "*": {
+            "platform.stdio-baud-rate"          : 115200,
+            "platform.stdio-convert-newlines"   : true,
+            "lwip.socket-max"                   : 8,
+            "lwip.tcp-socket-max"               : 8, 
+            "lwip.tcp-server-max"               : 8, 
+            "lwip.udp-socket-max"               : 8,
+            "target.components_add"             : ["NUSD"]
+        }
+    }
+}
